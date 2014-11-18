@@ -1,6 +1,6 @@
 " loki "{{{1
 
-" Last Update: Nov 18, Tue | 16:03:45 | 2014
+" Last Update: Nov 18, Tue | 21:24:55 | 2014
 
 " vars "{{{2
 
@@ -9,10 +9,10 @@ let s:BufC_Loc='chinese.loc'
 let s:BufT_Loc='tmp.loc'
 let s:BufG_Loc='glossary.loc'
 
-let s:Buf_Shell = 'tmp.loc'
-
 let s:File_Glossary = 'glossary.loc'
 let s:File_Source = 'english.loc'
+let s:File_Tmp = 'ztmp'
+let s:File_Output = 'tmp.loc'
 
 let s:Win_Shell = 1
 let s:Win_Trans = 2
@@ -21,7 +21,7 @@ let s:Win_Trans = 2
 
 " functions "{{{2
 
-" F1 "{{{3
+" parts "{{{3
 
 function! s:Yank() "{{{
 
@@ -34,6 +34,45 @@ function! s:Yank() "{{{
 	endif
 
 endfunction "}}}
+
+function! s:Grep(text,output) "{{{
+
+	" grep glossary/source
+	if a:text == 'glossary'
+		let l:text = s:File_Glossary
+	elseif a:text == 'source'
+		let l:text = s:File_Source
+	endif
+
+	let l:grep = 'grep -i' . " '" . @" . "'" .
+	\ ' ' . l:text
+
+	" tmp file
+	let l:tmp = ' >' . ' ' . s:File_Tmp . ' &&' .
+	\ ' cat' . ' ' . s:File_Tmp
+
+	" output to Vim
+	" overwrite buffer
+	if a:output == 'write'
+		let l:output = ' >' . ' ' . s:File_Output
+	" add to buffer
+	elseif a:output == 'add'
+		let l:output = ' >>' . ' ' . s:File_Output
+	endif
+
+	" shell command
+	if a:output == 'write' || a:output == 'add'
+		let l:command = l:grep . l:tmp . l:output
+	elseif a:output == 'shell'
+		let l:command = l:grep
+	endif
+
+	let @+ = l:command
+
+endfunction "}}}
+
+ "}}}3
+" F1 "{{{3
 
 function! s:F1_Loc() "{{{
 
@@ -59,37 +98,6 @@ endfunction "}}}
  "}}}3
 
 " F3 "{{{3
-
-function! s:Grep(file,vim) "{{{
-
-	" grep glossary/file
-	if a:file == 'glossary'
-		let l:file = s:File_Glossary
-	elseif a:file == 'source'
-		let l:file = s:File_Source
-	endif
-
-	" overwrite Vim buffer
-	if a:vim == 'write'
-		let l:vim = ' > ' . s:Buf_Shell
-	" add to Vim buffer
-	elseif a:vim == 'add'
-		let l:vim = ' >> ' . s:Buf_Shell
-	" view in shell
-	elseif a:vim == 'shell'
-		let l:vim = ''
-	endif
-
-	let l:command = 'grep -i ' . "'" . @" . "' " .
-	\ l:file . l:vim
-
-	if a:vim == 'write' || a:vim == 'add'
-		execute '!' . l:command
-	elseif a:vim == 'shell'
-		let @* = l:command
-	endif
-
-endfunction "}}}
 
 function! s:F3_Loc() "{{{
 
@@ -161,7 +169,7 @@ command! KeLocal call <sid>Localization()
 
 command! LocFormat call <sid>FileFormat_Loc()
 "command! LocLine call LineBreak_Loc()
-autocmd BufRead *.loc call <sid>Localization()
+autocmd! BufRead *.loc call <sid>Localization()
 
  "}}}2
 
