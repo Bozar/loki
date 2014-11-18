@@ -1,4 +1,4 @@
 loki
 ====
 
-LoKalIzation IDE
+Lokalization IDE
