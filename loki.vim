@@ -1,6 +1,6 @@
-" loki "{{{1
+" loki.vim "{{{1
 
-" Last Update: Nov 18, Tue | 21:24:55 | 2014
+" Last Update: Nov 21, Fri | 23:42:06 | 2014
 
 " vars "{{{2
 
@@ -25,49 +25,49 @@ let s:Win_Trans = 2
 
 function! s:Yank() "{{{
 
-	" yank GUID
-	if bufwinnr('%') == s:Win_Trans
-		execute 'normal ^2f	lviW'
-	" yank Chinese
-	elseif bufwinnr('%') == s:Win_Shell
-		execute 'normal ^5f	lviW'
-	endif
+    " yank GUID
+    if bufwinnr('%') == s:Win_Trans
+        execute 'normal ^2f	lviW'
+    " yank Chinese
+    elseif bufwinnr('%') == s:Win_Shell
+        execute 'normal ^5f	lviW'
+    endif
 
 endfunction "}}}
 
 function! s:Grep(text,output) "{{{
 
-	" grep glossary/source
-	if a:text == 'glossary'
-		let l:text = s:File_Glossary
-	elseif a:text == 'source'
-		let l:text = s:File_Source
-	endif
+    " grep glossary/source
+    if a:text == 'glossary'
+        let l:text = s:File_Glossary
+    elseif a:text == 'source'
+        let l:text = s:File_Source
+    endif
 
-	let l:grep = 'grep -i' . " '" . @" . "'" .
-	\ ' ' . l:text
+    let l:grep = 'grep -i' . " '" . @" . "'" .
+    \ ' ' . l:text
 
-	" tmp file
-	let l:tmp = ' >' . ' ' . s:File_Tmp . ' &&' .
-	\ ' cat' . ' ' . s:File_Tmp
+    " tmp file
+    let l:tmp = ' >' . ' ' . s:File_Tmp . ' &&' .
+    \ ' cat' . ' ' . s:File_Tmp
 
-	" output to Vim
-	" overwrite buffer
-	if a:output == 'write'
-		let l:output = ' >' . ' ' . s:File_Output
-	" add to buffer
-	elseif a:output == 'add'
-		let l:output = ' >>' . ' ' . s:File_Output
-	endif
+    " output to Vim
+    " overwrite buffer
+    if a:output == 'write'
+        let l:output = ' >' . ' ' . s:File_Output
+    " add to buffer
+    elseif a:output == 'add'
+        let l:output = ' >>' . ' ' . s:File_Output
+    endif
 
-	" shell command
-	if a:output == 'write' || a:output == 'add'
-		let l:command = l:grep . l:tmp . l:output
-	elseif a:output == 'shell'
-		let l:command = l:grep
-	endif
+    " shell command
+    if a:output == 'write' || a:output == 'add'
+        let l:command = l:grep . l:tmp . l:output
+    elseif a:output == 'shell'
+        let l:command = l:grep
+    endif
 
-	let @+ = l:command
+    let @+ = l:command
 
 endfunction "}}}
 
@@ -76,11 +76,11 @@ endfunction "}}}
 
 function! s:F1_Loc() "{{{
 
-	" window jump
-	nno <buffer> <silent> <f1> <c-w>w
+    " window jump
+    nno <buffer> <silent> <f1> <c-w>w
 
-	nno <buffer> <silent> <s-f1>
-	\ :call <sid>Yank()<cr>
+    nno <buffer> <silent> <s-f1>
+    \ :call <sid>Yank()<cr>
 
 endfunction "}}}
 
@@ -90,8 +90,8 @@ endfunction "}}}
 
 function! s:F2_Loc() "{{{
 
-	nno <buffer> <silent> <f2>
-	\ :execute 'normal ^f	'<cr>
+    nno <buffer> <silent> <f2>
+    \ :execute 'normal ^f	'<cr>
 
 endfunction "}}}
 
@@ -101,11 +101,11 @@ endfunction "}}}
 
 function! s:F3_Loc() "{{{
 
-	vno <buffer> <silent> <f3>
-	\ y:call <sid>Grep('glossary','write')<cr>
+    vno <buffer> <silent> <f3>
+    \ y:call <sid>Grep('glossary','write')<cr>
 
-	vno <buffer> <silent> <s-f3>
-	\ y:call <sid>Grep('glossary','add')<cr>
+    vno <buffer> <silent> <s-f3>
+    \ y:call <sid>Grep('glossary','add')<cr>
 
 endfunction "}}}
 
@@ -115,11 +115,11 @@ endfunction "}}}
 
 function! s:F4_Loc() "{{{
 
-	vno <buffer> <silent> <f4>
-	\ y:call <sid>Grep('source','write')<cr>
+    vno <buffer> <silent> <f4>
+    \ y:call <sid>Grep('source','write')<cr>
 
-	vno <buffer> <silent> <s-f4>
-	\ y:call <sid>Grep('source','add')<cr>
+    vno <buffer> <silent> <s-f4>
+    \ y:call <sid>Grep('source','add')<cr>
 
 endfunction "}}}
 
@@ -129,8 +129,8 @@ endfunction "}}}
 
 function! s:F5_Loc() "{{{
 
-	vno <buffer> <silent> <f5>
-	\ y:call <sid>Grep('glossary','shell')<cr>
+    vno <buffer> <silent> <f5>
+    \ y:call <sid>Grep('glossary','shell')<cr>
 
 endfunction "}}}
 
@@ -140,25 +140,25 @@ endfunction "}}}
 
 function! s:F6_Loc() "{{{
 
-	vno <buffer> <silent> <f6>
-	\ y:call <sid>Grep('source','shell')<cr>
+    vno <buffer> <silent> <f6>
+    \ y:call <sid>Grep('source','shell')<cr>
 
 endfunction "}}}
 
  "}}}3
 
 function! s:Localization() "{{{3
-	let i=1
-	while i<7
-		execute 'call <sid>F' . i . '_Loc()'
-		let i=i+1
-	endwhile
+    let i=1
+    while i<7
+        execute 'call <sid>F' . i . '_Loc()'
+        let i=i+1
+    endwhile
 endfunction "}}}3
 
 function! s:FileFormat_Loc() "{{{3
-	set fileencoding=utf-8
-	set fileformat=unix
-	%s/\r//ge
+    set fileencoding=utf-8
+    set fileformat=unix
+    %s/\r//ge
 endfunction "}}}3
 
  "}}}2
