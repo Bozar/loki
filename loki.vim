@@ -1,21 +1,24 @@
 " loki.vim "{{{1
 
-" Last Update: Nov 21, Fri | 23:42:06 | 2014
+" Last Update: Nov 27, Thu | 22:56:17 | 2014
 
 " vars "{{{2
 
-let s:BufE_Loc='english.loc'
-let s:BufC_Loc='chinese.loc'
-let s:BufT_Loc='tmp.loc'
-let s:BufG_Loc='glossary.loc'
+let s:BufE = 'english.loc'
+let s:BufC = 'chinese.loc'
+let s:BufT = 'tmp.loc'
+let s:BufG = 'glossary.loc'
 
-let s:File_Glossary = 'glossary.loc'
-let s:File_Source = 'english.loc'
-let s:File_Tmp = 'ztmp'
-let s:File_Output = 'tmp.loc'
+let s:FileGlossary = 'glossary.loc'
+let s:FileSource = 'english.loc'
+let s:FileTmp = 'ztmp'
+let s:FileOutput = 'tmp.loc'
 
-let s:Win_Shell = 1
-let s:Win_Trans = 2
+let s:WinShell = 1
+let s:WinTrans = 2
+
+let s:KeySearchTab = '<cr>'
+let s:KeySearchTabReverse = '<c-cr>'
 
  "}}}2
 
@@ -26,10 +29,10 @@ let s:Win_Trans = 2
 function! s:Yank() "{{{
 
     " yank GUID
-    if bufwinnr('%') == s:Win_Trans
+    if bufwinnr('%') == s:WinTrans
         execute 'normal ^2f	lviW'
     " yank Chinese
-    elseif bufwinnr('%') == s:Win_Shell
+    elseif bufwinnr('%') == s:WinShell
         execute 'normal ^5f	lviW'
     endif
 
@@ -39,25 +42,25 @@ function! s:Grep(text,output) "{{{
 
     " grep glossary/source
     if a:text == 'glossary'
-        let l:text = s:File_Glossary
+        let l:text = s:FileGlossary
     elseif a:text == 'source'
-        let l:text = s:File_Source
+        let l:text = s:FileSource
     endif
 
     let l:grep = 'grep -i' . " '" . @" . "'" .
     \ ' ' . l:text
 
     " tmp file
-    let l:tmp = ' >' . ' ' . s:File_Tmp . ' &&' .
-    \ ' cat' . ' ' . s:File_Tmp
+    let l:tmp = ' >' . ' ' . s:FileTmp . ' &&' .
+    \ ' cat' . ' ' . s:FileTmp
 
     " output to Vim
     " overwrite buffer
     if a:output == 'write'
-        let l:output = ' >' . ' ' . s:File_Output
+        let l:output = ' >' . ' ' . s:FileOutput
     " add to buffer
     elseif a:output == 'add'
-        let l:output = ' >>' . ' ' . s:File_Output
+        let l:output = ' >>' . ' ' . s:FileOutput
     endif
 
     " shell command
@@ -147,12 +150,29 @@ endfunction "}}}
 
  "}}}3
 
+function! s:KeyMap() "{{{3
+
+    execute 'nno <buffer> <silent>' . ' ' .
+    \ s:KeySearchTab . ' ' .
+    \ ':call moveCursor#SearchInLine(' .
+    \ "'\t','f')<cr>"
+
+    execute 'nno <buffer> <silent>' . ' ' .
+    \ s:KeySearchTabReverse . ' ' .
+    \ ':call moveCursor#SearchInLine(' .
+    \ "'\t','b')<cr>"
+
+endfunction "}}}3
+
 function! s:Localization() "{{{3
     let i=1
     while i<7
         execute 'call <sid>F' . i . '_Loc()'
         let i=i+1
     endwhile
+
+    call <sid>KeyMap()
+
 endfunction "}}}3
 
 function! s:FileFormat_Loc() "{{{3
