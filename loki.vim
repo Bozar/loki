@@ -1,6 +1,6 @@
 " loki.vim "{{{1
 
-" Last Update: Nov 28, Fri | 07:49:39 | 2014
+" Last Update: Feb 10, Tue | 11:33:32 | 2015
 
 " vars "{{{2
 
@@ -47,8 +47,11 @@ function! s:Grep(text,output) "{{{
         let l:text = s:FileSource
     endif
 
-    let l:grep = 'grep -i' . " '" . @" . "'" .
-    \ ' ' . l:text
+    let l:grep = 'grep -i' . ' ' .
+    \ shellescape(@") . ' ' . l:text
+
+    "let l:grep = 'grep -i' . " '" . @" . "'" .
+    "\ ' ' . l:text
 
     " tmp file
     let l:tmp = ' >' . ' ' . s:FileTmp . ' &&' .
