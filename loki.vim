@@ -1,5 +1,5 @@
 " loki.vim "{{{1
-" Last Update: Apr 17, Fri | 14:50:47 | 2015
+" Last Update: Apr 20, Mon | 14:17:46 | 2015
 
 " nightly version
 
@@ -218,7 +218,7 @@ function! s:KeyMap() "{{{3
     \ ':call <sid>SearchInLine(' .
     \ "'\t','b')<cr>"
 
-    nno <buffer> <silent> <c-cr>
+    nno <buffer> <silent> <s-cr>
     \ :call <sid>SplitScreen()<cr>
 
 endfunction "}}}3
