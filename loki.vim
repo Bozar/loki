@@ -1,5 +1,5 @@
 " loki.vim
-" Last Update: Jun 01, Mon | 09:59:28 | 2015
+" Last Update: Jun 01, Mon | 10:08:20 | 2015
 
 " nightly version
 
@@ -140,31 +140,39 @@ function! s:F2_Loc()
     \ :execute 'normal ^f	'<cr>
 endfunction
 
-" search glossary.loc in vim/shell
+" search glossary.loc in vim
 function! s:F3_Loc()
     vno <buffer> <silent> <f3>
     \ y:call <sid>Grep('glossary','write',1)<cr>
-    vno <buffer> <silent> <s-f3>
+endfunction
+
+" search english.loc in vim
+function! s:F4_Loc()
+    vno <buffer> <silent> <f4>
+    \ y:call <sid>Grep('source','write',1)<cr>
+endfunction
+
+" search glossary.loc in vim/shell
+function! s:F5_Loc()
+    vno <buffer> <silent> <f5>
     \ y:call <sid>Grep('glossary','write')<cr>
 endfunction
 
 " search english.loc in vim/shell
-function! s:F4_Loc()
-    vno <buffer> <silent> <f4>
-    \ y:call <sid>Grep('source','write',1)<cr>
-    vno <buffer> <silent> <s-f4>
+function! s:F6_Loc()
+    vno <buffer> <silent> <f6>
     \ y:call <sid>Grep('source','write')<cr>
 endfunction
 
 " print glossary.loc in shell
-function! s:F5_Loc()
-    vno <buffer> <silent> <f5>
+function! s:F7_Loc()
+    vno <buffer> <silent> <f7>
     \ y:call <sid>Grep('glossary','shell')<cr>
 endfunction
 
 " print english.loc in shell
-function! s:F6_Loc()
-    vno <buffer> <silent> <f6>
+function! s:F8_Loc()
+    vno <buffer> <silent> <f8>
     \ y:call <sid>Grep('source','shell')<cr>
 endfunction
 
@@ -185,7 +193,7 @@ endfunction
 
 function! s:Localization()
     let i=1
-    while i<7
+    while i<9
         execute 'call <sid>F' . i . '_Loc()'
         let i=i+1
     endwhile
