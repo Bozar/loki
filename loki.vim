@@ -1,9 +1,9 @@
-" loki.vim "{{{1
-" Last Update: Apr 20, Mon | 14:17:46 | 2015
+" loki.vim
+" Last Update: Jun 01, Mon | 09:59:28 | 2015
 
 " nightly version
 
-" vars "{{{2
+" vars
 
 let s:BufE = 'english.loc'
 let s:BufC = 'chinese.loc'
@@ -24,12 +24,9 @@ let s:KeySearchTabReverse = '<c-cr>'
 let s:BufWork = 'memo.loc'
 let s:BufTemp = 'tmp.loc'
 
-"}}}2
+" functions
 
-" functions "{{{2
-
-function! s:SplitScreen() "{{{3
-
+function! s:SplitScreen()
     if bufname('%') =~# s:BufWork
         if winnr('$') ># 1
             only
@@ -37,14 +34,14 @@ function! s:SplitScreen() "{{{3
         split
         if bufexists(s:BufTemp)
             execute 'buffer' . ' ' . s:BufTemp
+        else
+            execute 'find' . ' ' . s:BufTemp
         endif
         wincmd j
     endif
+endfunction
 
-endfunction "}}}3
-
-function! s:Yank() "{{{3
-
+function! s:Yank()
     " yank GUID
     if bufwinnr('%') == s:WinTrans
         execute 'normal ^2f	lviW'
@@ -52,11 +49,9 @@ function! s:Yank() "{{{3
     elseif bufwinnr('%') == s:WinShell
         execute 'normal ^5f	lviW'
     endif
+endfunction
 
-endfunction "}}}3
-
-function! s:Grep(text,output) "{{{3
-
+function! s:Grep(text,output,...)
     " grep glossary/source
     if a:text == 'glossary'
         let l:text = s:FileGlossary
@@ -92,10 +87,12 @@ function! s:Grep(text,output) "{{{3
 
     let @+ = l:command
 
-endfunction "}}}3
+    if exists('a:1') && a:1 ># 0
+        execute '!' . @+
+    endif
+endfunction
 
-function s:SearchInLine(pat,move) "{{{3
-
+function s:SearchInLine(pat,move)
     if a:move ==# 'f' || a:move ==# ''
         let l:noCursorPos = 'W'
         let l:cursorPos = 'cW'
@@ -128,86 +125,50 @@ function s:SearchInLine(pat,move) "{{{3
             return 1
         endif
     endwhile
+endfunction
 
-endfunction "}}}3
-
-" F1 "{{{3
-
-function! s:F1_Loc() "{{{4
-
-    " window jump
+" jump between windows
+function! s:F1_Loc()
     nno <buffer> <silent> <f1> <c-w>w
-
     nno <buffer> <silent> <s-f1>
     \ :call <sid>Yank()<cr>
+endfunction
 
-endfunction "}}}4
-
-"}}}3
-
-" F2 "{{{3
-
-function! s:F2_Loc() "{{{4
-
+" move between tabs in one line
+function! s:F2_Loc()
     nno <buffer> <silent> <f2>
     \ :execute 'normal ^f	'<cr>
+endfunction
 
-endfunction "}}}4
-
-"}}}3
-
-" F3 "{{{3
-
-function! s:F3_Loc() "{{{4
-
+" search glossary.loc in vim/shell
+function! s:F3_Loc()
     vno <buffer> <silent> <f3>
-    \ y:call <sid>Grep('glossary','write')<cr>
-
+    \ y:call <sid>Grep('glossary','write',1)<cr>
     vno <buffer> <silent> <s-f3>
-    \ y:call <sid>Grep('glossary','add')<cr>
+    \ y:call <sid>Grep('glossary','write')<cr>
+endfunction
 
-endfunction "}}}4
-
-"}}}3
-
-" F4 "{{{3
-
-function! s:F4_Loc() "{{{4
-
+" search english.loc in vim/shell
+function! s:F4_Loc()
     vno <buffer> <silent> <f4>
-    \ y:call <sid>Grep('source','write')<cr>
-
+    \ y:call <sid>Grep('source','write',1)<cr>
     vno <buffer> <silent> <s-f4>
-    \ y:call <sid>Grep('source','add')<cr>
+    \ y:call <sid>Grep('source','write')<cr>
+endfunction
 
-endfunction "}}}4
-
-"}}}3
-
-" F5 "{{{3
-
-function! s:F5_Loc() "{{{4
-
+" print glossary.loc in shell
+function! s:F5_Loc()
     vno <buffer> <silent> <f5>
     \ y:call <sid>Grep('glossary','shell')<cr>
+endfunction
 
-endfunction "}}}4
-
-"}}}3
-
-" F6 "{{{3
-
-function! s:F6_Loc() "{{{4
-
+" print english.loc in shell
+function! s:F6_Loc()
     vno <buffer> <silent> <f6>
     \ y:call <sid>Grep('source','shell')<cr>
+endfunction
 
-endfunction "}}}4
-
-"}}}3
-
-function! s:KeyMap() "{{{3
-
+function! s:KeyMap()
     execute 'nno <buffer> <silent>' . ' ' .
     \ s:KeySearchTab . ' ' .
     \ ':call <sid>SearchInLine(' .
@@ -220,10 +181,9 @@ function! s:KeyMap() "{{{3
 
     nno <buffer> <silent> <s-cr>
     \ :call <sid>SplitScreen()<cr>
+endfunction
 
-endfunction "}}}3
-
-function! s:Localization() "{{{3
+function! s:Localization()
     let i=1
     while i<7
         execute 'call <sid>F' . i . '_Loc()'
@@ -231,24 +191,18 @@ function! s:Localization() "{{{3
     endwhile
 
     call <sid>KeyMap()
+endfunction
 
-endfunction "}}}3
-
-function! s:FileFormat_Loc() "{{{3
+function! s:FileFormat_Loc()
     set fileencoding=utf-8
     set fileformat=unix
     %s/\r//ge
-endfunction "}}}3
+endfunction
 
-"}}}2
-
-" commands "{{{2
-
+" commands
 command! KeLocal call <sid>Localization()
-
 command! LocFormat call <sid>FileFormat_Loc()
 "command! LocLine call LineBreak_Loc()
 autocmd! BufRead *.loc call <sid>Localization()
 
-"}}}2
-" vim: set fdm=marker tw=50 "}}}1
+" vim: set fdm=indent tw=50 :
