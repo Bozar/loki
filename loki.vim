@@ -1,5 +1,5 @@
 " loki.vim
-" Last Update: Jun 01, Mon | 10:08:20 | 2015
+" Last Update: Oct 23, Fri | 16:50:29 | 2015
 
 " nightly version
 
@@ -10,10 +10,11 @@ let s:BufC = 'chinese.loc'
 let s:BufT = 'tmp.loc'
 let s:BufG = 'glossary.loc'
 
-let s:FileGlossary = 'glossary.loc'
-let s:FileSource = 'english.loc'
-let s:FileTmp = 'ztmp'
-let s:FileOutput = 'tmp.loc'
+let s:Folder = 'd:/Documents/'
+let s:FileGlossary = s:Folder . 'glossary.loc'
+let s:FileSource = s:Folder . 'english.loc'
+let s:FileTmp = s:Folder . 'ztmp'
+let s:FileOutput = s:Folder . 'tmp.loc'
 
 let s:WinShell = 1
 let s:WinTrans = 2
@@ -88,7 +89,8 @@ function! s:Grep(text,output,...)
     let @+ = l:command
 
     if exists('a:1') && a:1 ># 0
-        execute '!' . @+
+        execute 'silent !' . @+
+        "execute '!' . @+
     endif
 endfunction
 
@@ -193,7 +195,8 @@ endfunction
 
 function! s:Localization()
     let i=1
-    while i<9
+    while i<7
+    "while i<9
         execute 'call <sid>F' . i . '_Loc()'
         let i=i+1
     endwhile
