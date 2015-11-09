@@ -1,5 +1,5 @@
 " loki.vim
-" Last Update: Oct 23, Fri | 16:50:29 | 2015
+" Last Update: Nov 09, Mon | 14:05:45 | 2015
 
 " nightly version
 
@@ -129,6 +129,35 @@ function s:SearchInLine(pat,move)
     endwhile
 endfunction
 
+fun! s:DelOther()
+    if bufwinnr('%') ==# 1
+        exe 'g!;' . @" . ';d'
+    endif
+endfun
+
+fun! s:RecordBug()
+    1wincmd w
+    1,$y
+    buffer memo.loc
+    1/^bugfix
+    exe 'normal! jp'
+    call <sid>Comment('todo')
+    buffer #
+endfun
+
+fun! s:Comment(stat)
+    if a:stat ==# 'todo'
+        let @* = '尚未导入文本，'
+        let @* .= '请稍后在游戏内验证，谢谢！'
+        echo '未导入'
+    elseif a:stat ==# 'done'
+        let @* = '已修复文本，'
+        let @* .= '烦请在游戏内验证，谢谢！'
+        echo '已修复'
+    endif
+endfun
+
+
 " jump between windows
 function! s:F1_Loc()
     nno <buffer> <silent> <f1> <c-w>w
@@ -178,6 +207,30 @@ function! s:F8_Loc()
     \ y:call <sid>Grep('source','shell')<cr>
 endfunction
 
+" delete other lines
+function! s:F9_Loc()
+    vno <buffer> <silent> <f9>
+    \ y:call <sid>DelOther()<cr>
+endfunction
+
+" record bug
+function! s:F10_Loc()
+    nno <buffer> <silent> <f10>
+    \ :call <sid>RecordBug()<cr>
+endfunction
+
+" comment: todo
+function! s:F11_Loc()
+    nno <buffer> <silent> <f11>
+    \ :call <sid>Comment('todo')<cr>
+endfunction
+
+" comment: done
+function! s:F12_Loc()
+    nno <buffer> <silent> <f12>
+    \ :call <sid>Comment('done')<cr>
+endfunction
+
 function! s:KeyMap()
     execute 'nno <buffer> <silent>' . ' ' .
     \ s:KeySearchTab . ' ' .
@@ -195,8 +248,7 @@ endfunction
 
 function! s:Localization()
     let i=1
-    while i<7
-    "while i<9
+    while i<11
         execute 'call <sid>F' . i . '_Loc()'
         let i=i+1
     endwhile
