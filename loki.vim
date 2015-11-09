@@ -1,5 +1,5 @@
 " loki.vim
-" Last Update: Nov 09, Mon | 14:05:45 | 2015
+" Last Update: Nov 09, Mon | 14:53:32 | 2015
 
 " nightly version
 
@@ -44,24 +44,30 @@ endfunction
 
 function! s:Yank()
     " yank GUID
-    if bufwinnr('%') == s:WinTrans
+    if bufwinnr('%') ==# s:WinTrans
         execute 'normal ^2f	lviW'
     " yank Chinese
-    elseif bufwinnr('%') == s:WinShell
+    elseif bufwinnr('%') ==# s:WinShell
         execute 'normal ^5f	lviW'
     endif
 endfunction
 
 function! s:Grep(text,output,...)
     " grep glossary/source
-    if a:text == 'glossary'
+    if a:text ==# 'glossary'
         let l:text = s:FileGlossary
-    elseif a:text == 'source'
+    elseif a:text ==# 'source' ||
+    \ a:text ==# 'sourceAdd'
         let l:text = s:FileSource
     endif
 
-    let l:grep = 'grep -i' . ' ' .
-    \ shellescape(@") . ' ' . l:text
+    if a:text ==# 'sourceAdd'
+        let l:grep = 'grep -i -A 5' . ' ' .
+        \ shellescape(@") . ' ' . l:text
+    else
+        let l:grep = 'grep -i' . ' ' .
+        \ shellescape(@") . ' ' . l:text
+    endif
 
     "let l:grep = 'grep -i' . " '" . @" . "'" .
     "\ ' ' . l:text
@@ -72,17 +78,17 @@ function! s:Grep(text,output,...)
 
     " output to Vim
     " overwrite buffer
-    if a:output == 'write'
+    if a:output ==# 'write'
         let l:output = ' >' . ' ' . s:FileOutput
     " add to buffer
-    elseif a:output == 'add'
+    elseif a:output ==# 'add'
         let l:output = ' >>' . ' ' . s:FileOutput
     endif
 
     " shell command
-    if a:output == 'write' || a:output == 'add'
+    if a:output ==# 'write' || a:output ==# 'add'
         let l:command = l:grep . l:tmp . l:output
-    elseif a:output == 'shell'
+    elseif a:output ==# 'shell'
         let l:command = l:grep
     endif
 
@@ -181,6 +187,8 @@ endfunction
 function! s:F4_Loc()
     vno <buffer> <silent> <f4>
     \ y:call <sid>Grep('source','write',1)<cr>
+    vno <buffer> <silent> <s-f4>
+    \ y:call <sid>Grep('sourceAdd','write',1)<cr>
 endfunction
 
 " search glossary.loc in vim/shell
@@ -193,6 +201,8 @@ endfunction
 function! s:F6_Loc()
     vno <buffer> <silent> <f6>
     \ y:call <sid>Grep('source','write')<cr>
+    vno <buffer> <silent> <s-f6>
+    \ y:call <sid>Grep('sourceAdd','write')<cr>
 endfunction
 
 " print glossary.loc in shell
