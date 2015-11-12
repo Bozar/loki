@@ -1,5 +1,5 @@
 " loki.vim
-" Last Update: Nov 09, Mon | 14:53:32 | 2015
+" Last Update: Nov 12, Thu | 15:59:00 | 2015
 
 " nightly version
 
@@ -264,6 +264,17 @@ function! s:Localization()
     endwhile
 
     call <sid>KeyMap()
+
+    "========================================
+    " WARNING: tmp keymap for release note
+    " turn on/off
+    let s:LoadTmp = 0
+    " load key map
+    if s:LoadTmp ># 0
+        call <sid>TmpKeyMap()
+    endif
+    "========================================
+
 endfunction
 
 function! s:FileFormat_Loc()
@@ -277,5 +288,59 @@ command! KeLocal call <sid>Localization()
 command! LocFormat call <sid>FileFormat_Loc()
 "command! LocLine call LineBreak_Loc()
 autocmd! BufRead *.loc call <sid>Localization()
+
+"========================================
+" tmp keymap for releast note
+
+fun! s:GrepAlter()
+    if winnr() ==# 3
+        exe "'{+1"
+        let l:line = getline('.')
+        let l:name = substitute(l:line,'\v^(.{-}): (.*)$','\1','')
+        let l:des = substitute(l:line,'\v^(.{-}): (.*)$','\2','')
+        2wincmd w
+        exe 'silent ! grep -i ' . shellescape(l:name) .
+        \ ' d:/Documents/english.loc > d:/Documents/ztmp'
+        exe 'silent ! grep -i ' . shellescape(l:des) .
+        \ ' d:/Documents/english.loc >> d:/Documents/ztmp'
+        exe 'silent ! cat d:/Documents/ztmp > d:/Documents/tmp.loc'
+    else
+        return
+    endif
+endfun
+
+fun! s:Put(pos)
+    if winnr() ==# 2
+        exe 'normal! ^5f	lyiW'
+        1wincmd w
+        if a:pos ==# 0
+            exe 'normal! $p'
+            s;<.*>;;ge
+            +2
+            3wincmd w
+        elseif a:pos ==# 1
+            exe 'normal! ^P'
+            2wincmd w
+        endif
+    else
+        return
+    endif
+endfun
+
+fun! s:DelOtherAlter()
+    if winnr() ==# 2
+        exe 'g!;' . @" . ';d'
+    endif
+endfun
+
+" WARNING: inserted into s:Localization()
+fun! s:TmpKeyMap()
+    nno <buffer> <silent> <f5> :call <sid>GrepAlter()<cr>
+    nno <buffer> <silent> <f6> :call <sid>Put(0)<cr>
+    nno <buffer> <silent> <f7> :call <sid>Put(1)<cr>
+    vno <buffer> <silent> <f9> y:call <sid>DelOtherAlter()<cr>
+endfun
+
+"========================================
 
 " vim: set fdm=indent tw=50 :
