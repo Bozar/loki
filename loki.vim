@@ -1,5 +1,5 @@
 " loki.vim
-" Last Update: Nov 12, Thu | 15:59:00 | 2015
+" Last Update: Nov 13, Fri | 15:36:24 | 2015
 
 " nightly version
 
@@ -258,7 +258,7 @@ endfunction
 
 function! s:Localization()
     let i=1
-    while i<11
+    while i <=# 12
         execute 'call <sid>F' . i . '_Loc()'
         let i=i+1
     endwhile
